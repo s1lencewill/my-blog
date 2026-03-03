@@ -7,26 +7,25 @@
 <meta name="full-screen" content="yes">
 <meta name="theme-color" content="#317EFB" />
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
-<meta name="description" content="ORCA做Metadynamics的案例上一篇文章更新了orca5.0版本metadynamics参数，根据这些参数，做一些实际例子。 实例介绍首先是orca动力学模块开发者 Martin Brehm教授在官网上有个aimd的例子：ORCA Molecular Dynamics Module 无法科学上网可以看看sob社长的博文：使用ORCA做从头算动力学(AIMD)的简单例子 这个例子是真空中[">
+<meta name="description" content="2021年7月1日，量子化学程序ORCA 5.0发布,动力学模块增加了metadynamics获得自由能面。集合变量可以用距离、角度、二面角、配位数，还可以加谐振或高斯限制势。这里解读一下手册对metadynamics部分的参数描述。 aimd命令列表metadynamics相关的两个命令是Manage_Colvar和Metadynamics，前者用来定义CV后者用来描述运行参数。 Manage_">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ORCA做Metadynamics的案例">
-<meta property="og:url" content="https://s1lencewill.github.io/my-blog/2026/03/03/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/index.html">
+<meta property="og:title" content="orca5.0版本metadynamics参数">
+<meta property="og:url" content="https://s1lencewill.github.io/my-blog/2022/05/30/orca5-%E7%89%88%E6%9C%ACmetadynamics%E5%8F%82%E6%95%B0/index.html">
 <meta property="og:site_name" content="我的个人博客">
-<meta property="og:description" content="ORCA做Metadynamics的案例上一篇文章更新了orca5.0版本metadynamics参数，根据这些参数，做一些实际例子。 实例介绍首先是orca动力学模块开发者 Martin Brehm教授在官网上有个aimd的例子：ORCA Molecular Dynamics Module 无法科学上网可以看看sob社长的博文：使用ORCA做从头算动力学(AIMD)的简单例子 这个例子是真空中[">
+<meta property="og:description" content="2021年7月1日，量子化学程序ORCA 5.0发布,动力学模块增加了metadynamics获得自由能面。集合变量可以用距离、角度、二面角、配位数，还可以加谐振或高斯限制势。这里解读一下手册对metadynamics部分的参数描述。 aimd命令列表metadynamics相关的两个命令是Manage_Colvar和Metadynamics，前者用来定义CV后者用来描述运行参数。 Manage_">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-03T04:33:33.000Z">
-<meta property="article:modified_time" content="2026-03-03T04:46:37.860Z">
+<meta property="article:published_time" content="2022-05-30T10:35:00.000Z">
+<meta property="article:modified_time" content="2026-03-03T09:14:23.525Z">
 <meta property="article:author" content="博主">
 <meta property="article:tag" content="Metadynamics">
 <meta property="article:tag" content="计算化学">
-<meta property="article:tag" content="AIMD">
 <meta property="article:tag" content="ORCA">
 <meta name="twitter:card" content="summary">
 
     <meta name="keywords" content="博客, 技术, 生活">
 
 
-<title >ORCA做Metadynamics的案例</title>
+<title >orca5.0版本metadynamics参数</title>
 
 <!-- Favicon -->
 
@@ -65,7 +64,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"s1lencewill.github.io","author":"博主","root":"/my-blog/","typed_text":["技术爱好者","持续学习者"],"theme_version":"2.2.7","theme":{"switch":true,"default":"style-light"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"(/≧▽≦/)咦！又好了！","hide_text":"(●—●)喔哟，崩溃啦！"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"","prefix":"博客已萌萌哒运行 undefined 天"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-03-03 12:46:37"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-03-03 17:14:23"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/my-blog/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -237,7 +236,7 @@
                             NEWS LETTER
                         </div>
                         <h1 class="trm-mb-30 trm-hsmb-font">
-                            ORCA做Metadynamics的案例
+                            orca5.0版本metadynamics参数
                         </h1>
 
                         
@@ -247,7 +246,7 @@
                                 </li>
                                 <li>
                                     <span>
-                                        2026
+                                        2022
                                     </span>
                                 </li>
                             </ul>
@@ -334,13 +333,13 @@
     <div class="col-sm-4">
         <div class="trm-card trm-label trm-label-light text-center">
             <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
-            03/03
+            05/30
         </div>
     </div>
     <div class="col-sm-4">
         <div class="trm-card trm-label trm-label-light text-center">
             <i class="iconfont far fa-clock trm-icon"></i><br>
-            12:33
+            18:35
         </div>
     </div>
     <div class="col-sm-4">
@@ -352,32 +351,31 @@
 </div>
 <div class="trm-card ">
     <article id="article-container" class="trm-publication">
-    <h1 id="ORCA做Metadynamics的案例"><a href="#ORCA做Metadynamics的案例" class="headerlink" title="ORCA做Metadynamics的案例"></a>ORCA做Metadynamics的案例</h1><p>上一篇文章更新了orca5.0版本metadynamics参数，根据这些参数，做一些实际例子。</p>
-<h2 id="实例介绍"><a href="#实例介绍" class="headerlink" title="实例介绍"></a>实例介绍</h2><p>首先是orca动力学模块开发者 Martin Brehm教授在官网上有个aimd的例子：<a target="_blank" rel="noopener" href="https://www.brehm-research.de/orca-md-module">ORCA Molecular Dynamics Module</a></p>
-<p>无法科学上网可以看看sob社长的博文：<a target="_blank" rel="noopener" href="https://sobereva.com/595">使用ORCA做从头算动力学(AIMD)的简单例子</a></p>
-<p>这个例子是真空中[Al(H2O)6]3+与NH3之间的质子转移的aimd模拟。这里我们将原输入文件改成metadynamics的输入文件，进行模拟。</p>
-<h2 id="输入文件"><a href="#输入文件" class="headerlink" title="输入文件"></a>输入文件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">! MD BLYP D3 def2-SVP</span><br><span class="line">%maxcore  10000</span><br><span class="line">%pal nprocs   8 end</span><br><span class="line">%md</span><br><span class="line">  initvel 300_K</span><br><span class="line">  timestep 1.0_fs</span><br><span class="line">  thermostat berendsen 300_K timecon 20.0_fs</span><br><span class="line">  dump position stride 1 filename &quot;trajectory.xyz&quot;</span><br><span class="line">  Manage_Colvar Define 1 Distance Atom 9 Atom 19</span><br><span class="line">  Manage_Colvar Define 2 Distance Atom 9 Atom 7</span><br><span class="line">  Metadynamics Colvar 1 Scale 0.5_A Colvar 2 Scale 0.5_A</span><br><span class="line">  Metadynamics HillSpawn 40 0.5 0.5 Store 250</span><br><span class="line">  run 500</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+    <p>2021年7月1日，量子化学程序ORCA 5.0发布,动力学模块增加了metadynamics获得自由能面。集合变量可以用距离、角度、二面角、配位数，还可以加谐振或高斯限制势。这里解读一下手册对metadynamics部分的参数描述。</p>
+<h2 id="aimd命令列表"><a href="#aimd命令列表" class="headerlink" title="aimd命令列表"></a>aimd命令列表</h2><p>metadynamics相关的两个命令是Manage_Colvar和Metadynamics，前者用来定义CV后者用来描述运行参数。</p>
+<h2 id="Manage-Colvar"><a href="#Manage-Colvar" class="headerlink" title="Manage_Colvar"></a>Manage_Colvar</h2><p>定义用于元动力学或对系统施加约束的集合变量（”Colvars”）。在一般意义上，Colvar只是返回实数的所有原子位置的连续函数。由于Colvars本身对模拟没有任何影响，因此目前只能对其进行定义或重新定义；没有删除它们的要求。</p>
+<p>Colvar命令的第二个参数是Colvar的编号。此数字稍后用于定位Colvar。如果以前定义的Colvar编号再次定义，则只需覆盖它。</p>
+<p>第三个强制参数是Colvar的类型，可以是距离、角度、二面体和配位数数。</p>
+<p>比如说集合变量为两个原子之间的距离：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Colvar Define 1 Distance Atom 0 Atom 7</span><br></pre></td></tr></table></figure>
 
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
-<li>CV1是H-N键长</li>
-<li>CV2是H-O键长</li>
-<li>高斯峰的参数是40 0.5 0.5</li>
-<li>每250fs保存一次自由能剖面</li>
-<li>总共运行500fs，算是一个快速反应过程</li>
-</ul>
-<p>二十几个原子运行速度还是挺快的。用ase看一下反应轨迹，基本一致。两个CV变化如图，200fs反应基本完成。</p>
-<h2 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h2><p>运行完毕，如果安装了Gnuplot会自动产生相应是绘图输入文件。这里选取第250fs的自由能剖面图像，可以看到正好对应了两个稳态及相互变化跨越的自由能壁垒。</p>
-<p>如果高斯峰参数设为20 0.25 0.25，就会出现下面这种比较细长尖锐的自由能剖面，选取适当的参数是必要的。</p>
-<h2 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h2><p>下面是我自己的一个工作，也是使用metadynamics做的真空还原反应的自由能变化。总体来说，效果还是不错。文章还在修改具体参数就先不写了。</p>
-<ul>
-<li>自由能剖面</li>
-<li>CV变化曲线</li>
-<li>势能和总能量变化</li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>作为orca的重磅更新，metadynamics模块能实现很多重要模拟。与orca对标的Gaussian相比，Gaussian就有点摆了，虽然用户量有绝对优势。</p>
-<p>还有非常感谢计算化学公社的sob社长开发的Multiwfn，能便捷实现orca输入文件的生成，开源让世界更美好。</p>
-<hr>
-<p><strong>感谢阅读！</strong></p>
+<p>就可以了。除了距离、角度之外，还支持原子分组并加权重的CV，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Colvar Define 2 Distance Atom 0 Group 1 2 3 Weights 1.0 1.0 1.0</span><br></pre></td></tr></table></figure>
+
+<p>这表示0号原子与一组原子间的距离，权重都为1.0。</p>
+<p>定义配位数的话就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Colvar Define 3 CoordNumber Atom 0 Group 1..10 Cutoff 200_pm</span><br></pre></td></tr></table></figure>
+
+<p>表示0号原子与1~10号原子的配位数，截断距离是200pm。</p>
+<p>后续会支持更多类型的CV定义，有需要可以去官方论坛反馈 <a target="_blank" rel="noopener" href="https://orcaforum.kofo.mpg.de/">https://orcaforum.kofo.mpg.de</a> （需要科学上网）。</p>
+<h2 id="Metadynamics命令模块和参数类型"><a href="#Metadynamics命令模块和参数类型" class="headerlink" title="Metadynamics命令模块和参数类型"></a>Metadynamics命令模块和参数类型</h2><p>以上是metadynamics的主命令，这些参数可以在对Metadynamics命令的单个调用中设置，也可以分布在多个此类调用中，以避免出现很长的行。在这两种情况下，参数设置的顺序都有一些规则。在设置任何其他参数之前，需要指定Metadynamics的所有Colvars。与Colvar相关的修改器（例如”scale”、”wall”和”range”）仅应用于在Metadynamics命令中在其前面最后指定的Colvar。</p>
+<h3 id="【scale】"><a href="#【scale】" class="headerlink" title="【scale】"></a>【scale】</h3><p>Colvars可以有不同的物理单位，例如距离的埃和角度的度。在多维元动力学运行中，相应数字的不同数值大小可能是一个问题：角度跨越180度的范围，而距离通常仅在10埃的间隔内。为了使所有Colvar具有相似的规模，Metadynamics模块将每个Colvar内部除以用户提供的常量。这些内部值是无量纲的，它们将被称为”scale”。对于以前指定的Colvar，可以通过缩放修改器设置缩放常量。它需要一个实数参数，必须以Colvar的物理单位指定（距离Colvars的长度单位，角度和二面体Colvars的角度单位）。坐标数Colvars无论如何都是无量纲的。如果未指定，则使用合理的比例默认值，距离Colvars为1.0埃，角度和二面体Colvars为20.0度，坐标数Colvars为0.2。</p>
+<h3 id="【wall】"><a href="#【wall】" class="headerlink" title="【wall】"></a>【wall】</h3><p>为了在元动力学模拟期间将Colvars保持在感兴趣的区域内，可以在Colvars上施加谐波墙。这是通过wall实现的。第一个参数，它指墙的方向，可以是较低的，也可以是较高的。第二个参数是这堵墙的位置——以Colvar的物理单位（例如，距离Colvar为埃）给出，而不是以比例单位给出。作为可选的第三个实数参数，谐波墙的弹簧常数可以用 $KJ\bullet mol^{-1}\bullet unit^{-2}$ ，其中unit是Colvar的默认物理单位（距离为埃，角度为度）。如果省略，弹簧常数默认为 $50 KJ\bullet mol^{-1}\bullet unit^{-2}$ 。可以定义上下限，例如在”Metadynamics Colvar 1 Wall Lower 3.0_A 50.0 Upper 10.0_A 50.0”中。请注意，也可以通过约束命令将单侧谐波墙施加到Colvars上。对于标准元动力学，wall的定义是多余的。然而，对于扩展的拉格朗日元动力学，元动力学命令中定义的wall直接作用于虚拟粒子。</p>
+<h3 id="【range】"><a href="#【range】" class="headerlink" title="【range】"></a>【range】</h3><p>应用于Colvars的最后一个设置是range修改器。它对元动力学运行本身没有影响，只控制自由能剖面的输出。range需要三个参数。前两个必须是实数，并定义区间下限和上限，对于该边界，应输出关于该Colvar的自由能剖面。第三个参数是整数类型，控制要为此间隔生成的网格点的数量。</p>
+<h3 id="【HillSpawn】"><a href="#【HillSpawn】" class="headerlink" title="【HillSpawn】"></a>【HillSpawn】</h3><p>通过HillSpawn修改器控制向偏置势添加高斯峰。它需要三个参数。第一个参数必须是整数类型，并定义高斯峰产生频率，即每增加多少MD步（通常每10–50 fs）就添加一个新高斯峰。第二个参数是实数，以 $KJ\bullet mol^{-1}$ 为单位指定每个新高斯峰的高度（通常为0.1–1.0） 。第三个参数以”比例单位”设置高斯峰的宽度σ（这是标准偏差，而不是方差）。在二维元动力学模拟中，宽度同时适用于两个维度，需要调整两个Colvars的比例，以获得正确的高斯峰宽度”纵横比”，σ的标准选择为0.1–1.0标度单位。</p>
+<h3 id="【store】"><a href="#【store】" class="headerlink" title="【store】"></a>【store】</h3><p>控制当前中间自由能剖面保存到磁盘的频率。它需要一个整数参数，指定两个这样的存储之间的MD模拟时间步数。对于二维Metadynamics，会编写文件名为”basename-metadynamics_2d_profile_###.gp”的Gnuplot源文件，可以使用免费软件工具Gnuplot（在Windows和GNU Linux上运行）将其转换为等高线图。这些等高线图的原始数据可以在名为”basename-metadynamics_2d_profile_###.gp.csv”的相应文件中找到。</p>
+<h3 id="【Welltempered】"><a href="#【Welltempered】" class="headerlink" title="【Welltempered】"></a>【Welltempered】</h3><p>打开well-tempered Metadynamics。与标准元动力学相比，自由能分布在这种方法的长期运行中趋于极限值。这种方法在之前已经产生了许多高斯峰的位置，缩小峰的大小，以便随着时间的推移，偏置势能的变化变得更小（收敛）。Well-tempered需要一个实数参数，即所谓的偏置温度，以温度单位指定。偏置温度的选择应确保 $\frac{1}{2}\bullet \kappa_{b} \bullet T_{bias}$ 的大小与模拟应克服的最大势垒的大小大致相同。例如，12000 K的偏置温度非常适合克服大约100 kJ&#x2F;mol的势垒。</p>
+<h3 id="【Lagrange】"><a href="#【Lagrange】" class="headerlink" title="【Lagrange】"></a>【Lagrange】</h3><p>打开扩展的拉格朗日元动力学。这个方法具体参见 Iannuzzi, M.; Laio, A.; Parrinello, M. (2003) Phys. Rev. Lett., 90, 238302.</p>
 
 </article>
     
@@ -393,10 +391,9 @@
         </h5>
     </div>
     
-    
         <div class="col-lg-6">
     <div class="trm-blog-card trm-scroll-animation">
-        <a href="/my-blog/2026/03/03/hello-world/" class="trm-cover-frame trm-anima-link">
+        <a href="/my-blog/2022/09/20/%E5%A6%82%E4%BD%95%E5%9C%A8CP2K%E5%AE%9E%E7%8E%B0Metadynamics%E6%A8%A1%E6%8B%9F/" class="trm-cover-frame trm-anima-link">
             
             
                 <img alt="cover" class="no-fancybox" src="/my-blog/img/block.jpg">
@@ -405,19 +402,51 @@
         
         <div class="trm-card-descr">
             <div class="trm-label trm-category trm-mb-20">
-                <a href=" #.">
-                    未分类
+                <a href=" /my-blog/categories/%E8%AE%A1%E7%AE%97%E5%8C%96%E5%AD%A6/">
+                    计算化学
                 </a>
             </div>
             <h5>
-                <a href="/my-blog/2026/03/03/hello-world/" class="trm-anima-link">
-                    Hello World
+                <a href="/my-blog/2022/09/20/%E5%A6%82%E4%BD%95%E5%9C%A8CP2K%E5%AE%9E%E7%8E%B0Metadynamics%E6%A8%A1%E6%8B%9F/" class="trm-anima-link">
+                    如何在CP2K实现Metadynamics模拟
                 </a>
             </h5>
             <div class="trm-divider trm-mb-20 trm-mt-20"></div>
             <ul class="trm-card-data trm-label">
-                <li>26/03/03</li>
-                <li>12:31</li>
+                <li>22/09/20</li>
+                <li>15:30</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/my-blog/2022/01/08/metadynamics-for-cp2k/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/my-blog/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /my-blog/categories/%E8%AE%A1%E7%AE%97%E5%8C%96%E5%AD%A6/">
+                    计算化学
+                </a>
+            </div>
+            <h5>
+                <a href="/my-blog/2022/01/08/metadynamics-for-cp2k/" class="trm-anima-link">
+                    metadynamics for cp2k
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>22/01/08</li>
+                <li>11:22</li>
                 
                 
             </ul>
@@ -481,7 +510,7 @@
 				</span>
       </div>
       <div class="trm-post-toc-content">
-        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-1" title="ORCA做Metadynamics的案例"><a rel="nofollow" class="trm-toc-link" href="#ORCA做Metadynamics的案例"><span class="trm-toc-text">ORCA做Metadynamics的案例</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-2" title="实例介绍"><a rel="nofollow" class="trm-toc-link" href="#实例介绍"><span class="trm-toc-text">实例介绍</span></a></li><li class="trm-toc-item trm-toc-level-2" title="输入文件"><a rel="nofollow" class="trm-toc-link" href="#输入文件"><span class="trm-toc-text">输入文件</span></a></li><li class="trm-toc-item trm-toc-level-2" title="参数说明"><a rel="nofollow" class="trm-toc-link" href="#参数说明"><span class="trm-toc-text">参数说明</span></a></li><li class="trm-toc-item trm-toc-level-2" title="结果分析"><a rel="nofollow" class="trm-toc-link" href="#结果分析"><span class="trm-toc-text">结果分析</span></a></li><li class="trm-toc-item trm-toc-level-2" title="实际应用"><a rel="nofollow" class="trm-toc-link" href="#实际应用"><span class="trm-toc-text">实际应用</span></a></li><li class="trm-toc-item trm-toc-level-2" title="总结"><a rel="nofollow" class="trm-toc-link" href="#总结"><span class="trm-toc-text">总结</span></a></li></ol></li></ol>
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="aimd命令列表"><a rel="nofollow" class="trm-toc-link" href="#aimd命令列表"><span class="trm-toc-text">aimd命令列表</span></a></li><li class="trm-toc-item trm-toc-level-2" title="Manage_Colvar"><a rel="nofollow" class="trm-toc-link" href="#Manage-Colvar"><span class="trm-toc-text">Manage_Colvar</span></a></li><li class="trm-toc-item trm-toc-level-2" title="Metadynamics命令模块和参数类型"><a rel="nofollow" class="trm-toc-link" href="#Metadynamics命令模块和参数类型"><span class="trm-toc-text">Metadynamics命令模块和参数类型</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-3" title="【scale】"><a rel="nofollow" class="trm-toc-link" href="#【scale】"><span class="trm-toc-text">【scale】</span></a></li><li class="trm-toc-item trm-toc-level-3" title="【wall】"><a rel="nofollow" class="trm-toc-link" href="#【wall】"><span class="trm-toc-text">【wall】</span></a></li><li class="trm-toc-item trm-toc-level-3" title="【range】"><a rel="nofollow" class="trm-toc-link" href="#【range】"><span class="trm-toc-text">【range】</span></a></li><li class="trm-toc-item trm-toc-level-3" title="【HillSpawn】"><a rel="nofollow" class="trm-toc-link" href="#【HillSpawn】"><span class="trm-toc-text">【HillSpawn】</span></a></li><li class="trm-toc-item trm-toc-level-3" title="【store】"><a rel="nofollow" class="trm-toc-link" href="#【store】"><span class="trm-toc-text">【store】</span></a></li><li class="trm-toc-item trm-toc-level-3" title="【Welltempered】"><a rel="nofollow" class="trm-toc-link" href="#【Welltempered】"><span class="trm-toc-text">【Welltempered】</span></a></li><li class="trm-toc-item trm-toc-level-3" title="【Lagrange】"><a rel="nofollow" class="trm-toc-link" href="#【Lagrange】"><span class="trm-toc-text">【Lagrange】</span></a></li></ol></li></ol>
       </div>
     </div>
 

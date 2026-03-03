@@ -7,26 +7,25 @@
 <meta name="full-screen" content="yes">
 <meta name="theme-color" content="#317EFB" />
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
-<meta name="description" content="ORCA做Metadynamics的案例上一篇文章更新了orca5.0版本metadynamics参数，根据这些参数，做一些实际例子。 实例介绍首先是orca动力学模块开发者 Martin Brehm教授在官网上有个aimd的例子：ORCA Molecular Dynamics Module 无法科学上网可以看看sob社长的博文：使用ORCA做从头算动力学(AIMD)的简单例子 这个例子是真空中[">
+<meta name="description" content="CP2K是著名的开源第一性原理材料计算和模拟软件, 广泛用于固体、液体、分子、周期、材料、晶体和生物系统的模拟。cp2k的开发者(The group of Prof. Jürg Hutter)很早就加入了增强采样的功能，相对其他第一性原理计算软件来说，cp2k的metadynamics功能还是比较完善的。cp2k的缺点就是多达数万个关键词的又臭又长的输入文件。 这里简单说明一下cp2k添加meta">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ORCA做Metadynamics的案例">
-<meta property="og:url" content="https://s1lencewill.github.io/my-blog/2026/03/03/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/index.html">
+<meta property="og:title" content="metadynamics for cp2k">
+<meta property="og:url" content="https://s1lencewill.github.io/my-blog/2022/01/08/metadynamics-for-cp2k/index.html">
 <meta property="og:site_name" content="我的个人博客">
-<meta property="og:description" content="ORCA做Metadynamics的案例上一篇文章更新了orca5.0版本metadynamics参数，根据这些参数，做一些实际例子。 实例介绍首先是orca动力学模块开发者 Martin Brehm教授在官网上有个aimd的例子：ORCA Molecular Dynamics Module 无法科学上网可以看看sob社长的博文：使用ORCA做从头算动力学(AIMD)的简单例子 这个例子是真空中[">
+<meta property="og:description" content="CP2K是著名的开源第一性原理材料计算和模拟软件, 广泛用于固体、液体、分子、周期、材料、晶体和生物系统的模拟。cp2k的开发者(The group of Prof. Jürg Hutter)很早就加入了增强采样的功能，相对其他第一性原理计算软件来说，cp2k的metadynamics功能还是比较完善的。cp2k的缺点就是多达数万个关键词的又臭又长的输入文件。 这里简单说明一下cp2k添加meta">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-03-03T04:33:33.000Z">
-<meta property="article:modified_time" content="2026-03-03T04:46:37.860Z">
+<meta property="article:published_time" content="2022-01-08T03:22:00.000Z">
+<meta property="article:modified_time" content="2026-03-03T09:15:13.730Z">
 <meta property="article:author" content="博主">
+<meta property="article:tag" content="CP2K">
 <meta property="article:tag" content="Metadynamics">
 <meta property="article:tag" content="计算化学">
-<meta property="article:tag" content="AIMD">
-<meta property="article:tag" content="ORCA">
 <meta name="twitter:card" content="summary">
 
     <meta name="keywords" content="博客, 技术, 生活">
 
 
-<title >ORCA做Metadynamics的案例</title>
+<title >metadynamics for cp2k</title>
 
 <!-- Favicon -->
 
@@ -65,7 +64,7 @@
 
 <!-- Variable -->
 <script>window.ASYNC_CONFIG = {"hostname":"s1lencewill.github.io","author":"博主","root":"/my-blog/","typed_text":["技术爱好者","持续学习者"],"theme_version":"2.2.7","theme":{"switch":true,"default":"style-light"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"(/≧▽≦/)咦！又好了！","hide_text":"(●—●)喔哟，崩溃啦！"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"","prefix":"博客已萌萌哒运行 undefined 天"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
-<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-03-03 12:46:37"};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-03-03 17:15:13"};</script>
 
 <!-- Theme mode css -->
 <link data-swup-theme rel="stylesheet" href="/my-blog/css/index.css?v=2.2.7" id="trm-switch-style">
@@ -237,7 +236,7 @@
                             NEWS LETTER
                         </div>
                         <h1 class="trm-mb-30 trm-hsmb-font">
-                            ORCA做Metadynamics的案例
+                            metadynamics for cp2k
                         </h1>
 
                         
@@ -247,7 +246,7 @@
                                 </li>
                                 <li>
                                     <span>
-                                        2026
+                                        2022
                                     </span>
                                 </li>
                             </ul>
@@ -334,13 +333,13 @@
     <div class="col-sm-4">
         <div class="trm-card trm-label trm-label-light text-center">
             <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
-            03/03
+            01/08
         </div>
     </div>
     <div class="col-sm-4">
         <div class="trm-card trm-label trm-label-light text-center">
             <i class="iconfont far fa-clock trm-icon"></i><br>
-            12:33
+            11:22
         </div>
     </div>
     <div class="col-sm-4">
@@ -352,32 +351,19 @@
 </div>
 <div class="trm-card ">
     <article id="article-container" class="trm-publication">
-    <h1 id="ORCA做Metadynamics的案例"><a href="#ORCA做Metadynamics的案例" class="headerlink" title="ORCA做Metadynamics的案例"></a>ORCA做Metadynamics的案例</h1><p>上一篇文章更新了orca5.0版本metadynamics参数，根据这些参数，做一些实际例子。</p>
-<h2 id="实例介绍"><a href="#实例介绍" class="headerlink" title="实例介绍"></a>实例介绍</h2><p>首先是orca动力学模块开发者 Martin Brehm教授在官网上有个aimd的例子：<a target="_blank" rel="noopener" href="https://www.brehm-research.de/orca-md-module">ORCA Molecular Dynamics Module</a></p>
-<p>无法科学上网可以看看sob社长的博文：<a target="_blank" rel="noopener" href="https://sobereva.com/595">使用ORCA做从头算动力学(AIMD)的简单例子</a></p>
-<p>这个例子是真空中[Al(H2O)6]3+与NH3之间的质子转移的aimd模拟。这里我们将原输入文件改成metadynamics的输入文件，进行模拟。</p>
-<h2 id="输入文件"><a href="#输入文件" class="headerlink" title="输入文件"></a>输入文件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">! MD BLYP D3 def2-SVP</span><br><span class="line">%maxcore  10000</span><br><span class="line">%pal nprocs   8 end</span><br><span class="line">%md</span><br><span class="line">  initvel 300_K</span><br><span class="line">  timestep 1.0_fs</span><br><span class="line">  thermostat berendsen 300_K timecon 20.0_fs</span><br><span class="line">  dump position stride 1 filename &quot;trajectory.xyz&quot;</span><br><span class="line">  Manage_Colvar Define 1 Distance Atom 9 Atom 19</span><br><span class="line">  Manage_Colvar Define 2 Distance Atom 9 Atom 7</span><br><span class="line">  Metadynamics Colvar 1 Scale 0.5_A Colvar 2 Scale 0.5_A</span><br><span class="line">  Metadynamics HillSpawn 40 0.5 0.5 Store 250</span><br><span class="line">  run 500</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+    <p>CP2K是著名的开源第一性原理材料计算和模拟软件, 广泛用于固体、液体、分子、周期、材料、晶体和生物系统的模拟。cp2k的开发者(The group of Prof. Jürg Hutter)很早就加入了增强采样的功能，相对其他第一性原理计算软件来说，cp2k的metadynamics功能还是比较完善的。cp2k的缺点就是多达数万个关键词的又臭又长的输入文件。</p>
+<p>这里简单说明一下cp2k添加metadynamics的关键词的位置包括定义CV、限制CV和metadynamics参数设置。</p>
+<h2 id="定义CV"><a href="#定义CV" class="headerlink" title="定义CV"></a>定义CV</h2><p>CV的定义和设置是在SUBSYS模块下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&amp;COLVAR </span><br><span class="line"> &amp;DISTANCE </span><br><span class="line">  AXIS X</span><br><span class="line">  ATOMS 1 4  #1 4号原子之间的距离</span><br><span class="line"> &amp;END DISTANCE</span><br><span class="line">&amp;END COLVAR</span><br><span class="line"></span><br><span class="line">&amp;COLVAR</span><br><span class="line"> &amp;DISTANCE_FUNCTION</span><br><span class="line">  ATOMS 4 6 6 1 </span><br><span class="line">  COEFFICIENT -1.00000 #变化系数a(CV=d1+a*d2)</span><br><span class="line">  # distance 1 = ( 4 - 6 )</span><br><span class="line">  # distance 2 = ( 6 - 1 ) #两组键长的距离函数</span><br><span class="line">  &amp;END DISTANCE_FUNCTION</span><br><span class="line"> &amp;END COLVAR #注意定义CV时不用添加标签，按顺序即可，后面设置参数时COLVAR 1 就是顺序第一个</span><br><span class="line"></span><br><span class="line">&amp;COLVAR</span><br><span class="line"> &amp;COORDINATION #配位数</span><br><span class="line">  KINDS_FROM N #cp2k可以直接指定元素，不用原子label,这一点很nice</span><br><span class="line">  KINDS_TO O</span><br><span class="line">  R_0 [angstrom] 1.8 #截断距离</span><br><span class="line">  NN 8</span><br><span class="line">  ND 14 #配位数公式的指数参数，ND=2NN</span><br><span class="line"> &amp;END COORDINATION</span><br><span class="line"> &amp;END COLVAR</span><br><span class="line"></span><br><span class="line">&amp;COLVAR</span><br><span class="line"> &amp;RMSD#表征构型变化的RMSD，xtb的metadynamics就是以RMSD作为唯一CV的</span><br><span class="line">  &amp;FRAME</span><br><span class="line">  COORD_FILE_NAME planar.xyz</span><br><span class="line"> &amp;END</span><br><span class="line">  &amp;FRAME</span><br><span class="line">  COORD_FILE_NAME cage.xyz</span><br><span class="line"> &amp;END</span><br><span class="line"> SUBSET_TYPE LIST</span><br><span class="line"> ATOMS 1 3 5 6 8 9</span><br><span class="line"> ALIGN_FRAMES T#对齐分子</span><br><span class="line"> &amp;END</span><br><span class="line"> &amp;END</span><br></pre></td></tr></table></figure>
 
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
-<li>CV1是H-N键长</li>
-<li>CV2是H-O键长</li>
-<li>高斯峰的参数是40 0.5 0.5</li>
-<li>每250fs保存一次自由能剖面</li>
-<li>总共运行500fs，算是一个快速反应过程</li>
-</ul>
-<p>二十几个原子运行速度还是挺快的。用ase看一下反应轨迹，基本一致。两个CV变化如图，200fs反应基本完成。</p>
-<h2 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h2><p>运行完毕，如果安装了Gnuplot会自动产生相应是绘图输入文件。这里选取第250fs的自由能剖面图像，可以看到正好对应了两个稳态及相互变化跨越的自由能壁垒。</p>
-<p>如果高斯峰参数设为20 0.25 0.25，就会出现下面这种比较细长尖锐的自由能剖面，选取适当的参数是必要的。</p>
-<h2 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h2><p>下面是我自己的一个工作，也是使用metadynamics做的真空还原反应的自由能变化。总体来说，效果还是不错。文章还在修改具体参数就先不写了。</p>
-<ul>
-<li>自由能剖面</li>
-<li>CV变化曲线</li>
-<li>势能和总能量变化</li>
-</ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>作为orca的重磅更新，metadynamics模块能实现很多重要模拟。与orca对标的Gaussian相比，Gaussian就有点摆了，虽然用户量有绝对优势。</p>
-<p>还有非常感谢计算化学公社的sob社长开发的Multiwfn，能便捷实现orca输入文件的生成，开源让世界更美好。</p>
-<hr>
-<p><strong>感谢阅读！</strong></p>
+<p>上述是设置CV的例子，我用的7.2版本cp2k可设置28种类型的CV。CP2K_INPUT &#x2F; FORCE_EVAL &#x2F; SUBSYS &#x2F; COLVAR，具体可以看官网关键词。</p>
+<h2 id="限制CV"><a href="#限制CV" class="headerlink" title="限制CV"></a>限制CV</h2><p>很多时候需要对CV进行一些限制来达到模拟，这个步骤可以在MOTION模块完成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&amp;CONSTRAINT</span><br><span class="line">  &amp;COLLECTIVE</span><br><span class="line">  COLVAR 1</span><br><span class="line">  INTERMOLECULAR</span><br><span class="line">  TARGET 5.</span><br><span class="line">  TARGET_GROWTH 1.1</span><br><span class="line">  TARGET_LIMIT 10.</span><br><span class="line"> &amp;END COLLECTIVE</span><br><span class="line">&amp;END CONSTRAINT</span><br><span class="line"></span><br><span class="line">&amp;COLLECTIVE</span><br><span class="line"> TARGET [deg] 0.0</span><br><span class="line"> MOLECULE 1</span><br><span class="line"> COLVAR 2</span><br><span class="line"> &amp;RESTRAINT</span><br><span class="line"> K [kcalmol] 4.90</span><br><span class="line"> &amp;END</span><br><span class="line">&amp;END COLLECTIVE</span><br></pre></td></tr></table></figure>
+
+<h2 id="mtd参数设置"><a href="#mtd参数设置" class="headerlink" title="mtd参数设置"></a>mtd参数设置</h2><p>mtd在MOTION模块下，加入&amp;FREE_ENERGY就能开启自由能计算，包括alchemical change、mtd、umbrella integration等计算方法，下面用一个扩展拉格朗日元动力学例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">&amp;FREE_ENERGY</span><br><span class="line"> &amp;METADYN</span><br><span class="line"> DO_HILLS T #生成高斯峰</span><br><span class="line"> LAGRANGE #打开扩展拉格朗日方法</span><br><span class="line"> NT_HILLS 40 #高斯峰生成频率</span><br><span class="line"> SLOW_GROWTH #Let the last hill grow slowly over NT_HILLS</span><br><span class="line"> TEMPERATURE 300 </span><br><span class="line"> TEMP_TOL 100 #拉格朗日元动力学需要偏置温度及容差</span><br><span class="line"> WW 0.0001 #高斯峰高度参数</span><br><span class="line"> HILL_TAIL_CUTOFF 2 #防止高斯峰快速衰减</span><br><span class="line"> P_EXPONENT 8 </span><br><span class="line"> Q_EXPONENT 20 #截至函数指数部分参数，一般默认即可</span><br><span class="line"></span><br><span class="line"> &amp;METAVAR</span><br><span class="line"> COLVAR 1  #指定CV</span><br><span class="line"> SCALE 0.18 #峰宽</span><br><span class="line"> LAMBDA 0.8 #在扩展拉格朗日方法中，为CV与系统坐标的耦合指定 lambda 参数</span><br><span class="line"> MASS 20 #质量参数</span><br><span class="line"></span><br><span class="line"> &amp;WALL #扩展拉格朗日方法需要指定wall参数</span><br><span class="line"> POSITION 2.0 #wall位置</span><br><span class="line"> TYPE QUADRATIC #wall类型，可以指定高斯势、二次势、四次势和反射势</span><br><span class="line"> &amp;QUADRATIC #二次势参数</span><br><span class="line"> DIRECTION WALL_PLUS </span><br><span class="line"> K 1.0 </span><br><span class="line"> &amp;END QUADRATIC </span><br><span class="line"> &amp;END WALL</span><br><span class="line"> &amp;END METAVAR</span><br><span class="line"></span><br><span class="line">&amp;METAVAR </span><br><span class="line"> COLVAR 2 </span><br><span class="line"> SCALE 0.22 </span><br><span class="line"> LAMBDA 0.8 </span><br><span class="line"> MASS 30 </span><br><span class="line"> &amp;END METAVAR</span><br><span class="line"></span><br><span class="line"> &amp;PRINT #输出设置</span><br><span class="line"> &amp;COLVAR </span><br><span class="line"> COMMON_ITERATION_LEVELS 3 #输出数据质量</span><br><span class="line"> &amp;EACH </span><br><span class="line"> MD 1 </span><br><span class="line"> &amp;END </span><br><span class="line"> &amp;END </span><br><span class="line"> &amp;HILLS </span><br><span class="line"> COMMON_ITERATION_LEVELS 3 </span><br><span class="line"> &amp;EACH </span><br><span class="line"> MD 1 </span><br><span class="line"> &amp;END </span><br><span class="line"> &amp;END </span><br><span class="line"> &amp;END </span><br><span class="line"> &amp;END METADYN</span><br><span class="line">&amp;END FREE_ENERGY</span><br></pre></td></tr></table></figure>
+
+<p>以上就是cp2k完成metadynamics的参数设置例子，具体版本需要具体看手册关键词。</p>
 
 </article>
     
@@ -393,10 +379,9 @@
         </h5>
     </div>
     
-    
         <div class="col-lg-6">
     <div class="trm-blog-card trm-scroll-animation">
-        <a href="/my-blog/2026/03/03/hello-world/" class="trm-cover-frame trm-anima-link">
+        <a href="/my-blog/2022/05/30/orca5-%E7%89%88%E6%9C%ACmetadynamics%E5%8F%82%E6%95%B0/" class="trm-cover-frame trm-anima-link">
             
             
                 <img alt="cover" class="no-fancybox" src="/my-blog/img/block.jpg">
@@ -405,25 +390,26 @@
         
         <div class="trm-card-descr">
             <div class="trm-label trm-category trm-mb-20">
-                <a href=" #.">
-                    未分类
+                <a href=" /my-blog/categories/%E8%AE%A1%E7%AE%97%E5%8C%96%E5%AD%A6/">
+                    计算化学
                 </a>
             </div>
             <h5>
-                <a href="/my-blog/2026/03/03/hello-world/" class="trm-anima-link">
-                    Hello World
+                <a href="/my-blog/2022/05/30/orca5-%E7%89%88%E6%9C%ACmetadynamics%E5%8F%82%E6%95%B0/" class="trm-anima-link">
+                    orca5.0版本metadynamics参数
                 </a>
             </h5>
             <div class="trm-divider trm-mb-20 trm-mt-20"></div>
             <ul class="trm-card-data trm-label">
-                <li>26/03/03</li>
-                <li>12:31</li>
+                <li>22/05/30</li>
+                <li>18:35</li>
                 
                 
             </ul>
         </div>
     </div>
 </div>
+    
     
 </div>
 
@@ -481,7 +467,7 @@
 				</span>
       </div>
       <div class="trm-post-toc-content">
-        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-1" title="ORCA做Metadynamics的案例"><a rel="nofollow" class="trm-toc-link" href="#ORCA做Metadynamics的案例"><span class="trm-toc-text">ORCA做Metadynamics的案例</span></a><ol class="trm-toc-child"><li class="trm-toc-item trm-toc-level-2" title="实例介绍"><a rel="nofollow" class="trm-toc-link" href="#实例介绍"><span class="trm-toc-text">实例介绍</span></a></li><li class="trm-toc-item trm-toc-level-2" title="输入文件"><a rel="nofollow" class="trm-toc-link" href="#输入文件"><span class="trm-toc-text">输入文件</span></a></li><li class="trm-toc-item trm-toc-level-2" title="参数说明"><a rel="nofollow" class="trm-toc-link" href="#参数说明"><span class="trm-toc-text">参数说明</span></a></li><li class="trm-toc-item trm-toc-level-2" title="结果分析"><a rel="nofollow" class="trm-toc-link" href="#结果分析"><span class="trm-toc-text">结果分析</span></a></li><li class="trm-toc-item trm-toc-level-2" title="实际应用"><a rel="nofollow" class="trm-toc-link" href="#实际应用"><span class="trm-toc-text">实际应用</span></a></li><li class="trm-toc-item trm-toc-level-2" title="总结"><a rel="nofollow" class="trm-toc-link" href="#总结"><span class="trm-toc-text">总结</span></a></li></ol></li></ol>
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="定义CV"><a rel="nofollow" class="trm-toc-link" href="#定义CV"><span class="trm-toc-text">定义CV</span></a></li><li class="trm-toc-item trm-toc-level-2" title="限制CV"><a rel="nofollow" class="trm-toc-link" href="#限制CV"><span class="trm-toc-text">限制CV</span></a></li><li class="trm-toc-item trm-toc-level-2" title="mtd参数设置"><a rel="nofollow" class="trm-toc-link" href="#mtd参数设置"><span class="trm-toc-text">mtd参数设置</span></a></li></ol>
       </div>
     </div>
 

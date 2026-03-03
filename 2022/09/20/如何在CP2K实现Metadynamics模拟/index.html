@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="这里使用cp2k官网的例子，说明一下MtD在cp2k中的实现。这个例子是两个HNO3分子在石墨烯片上的解离动力学。 首先要会使用cp2k做正常的的AIMD，MtD只是在正常的NVT系综的AIMD中添加相应的关键词即可。 初始结构第一部分是正常的AIMD的输入文件：包含结构、方法、泛函、任务类型、输出信息和重启文件等等。 123456789101112131415161718192021222324">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何在CP2K实现Metadynamics模拟">
+<meta property="og:url" content="https://s1lencewill.github.io/my-blog/2022/09/20/%E5%A6%82%E4%BD%95%E5%9C%A8CP2K%E5%AE%9E%E7%8E%B0Metadynamics%E6%A8%A1%E6%8B%9F/index.html">
+<meta property="og:site_name" content="我的个人博客">
+<meta property="og:description" content="这里使用cp2k官网的例子，说明一下MtD在cp2k中的实现。这个例子是两个HNO3分子在石墨烯片上的解离动力学。 首先要会使用cp2k做正常的的AIMD，MtD只是在正常的NVT系综的AIMD中添加相应的关键词即可。 初始结构第一部分是正常的AIMD的输入文件：包含结构、方法、泛函、任务类型、输出信息和重启文件等等。 123456789101112131415161718192021222324">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-20T07:30:00.000Z">
+<meta property="article:modified_time" content="2026-03-03T09:16:10.822Z">
+<meta property="article:author" content="博主">
+<meta property="article:tag" content="CP2K">
+<meta property="article:tag" content="Metadynamics">
+<meta property="article:tag" content="计算化学">
+<meta property="article:tag" content="AIMD">
+<meta name="twitter:card" content="summary">
+
+    <meta name="keywords" content="博客, 技术, 生活">
+
+
+<title >如何在CP2K实现Metadynamics模拟</title>
+
+<!-- Favicon -->
+
+    <link href='/my-blog/img/favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/my-blog/img/favicon.svg?v=2.2.7' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/my-blog/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/my-blog/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"s1lencewill.github.io","author":"博主","root":"/my-blog/","typed_text":["技术爱好者","持续学习者"],"theme_version":"2.2.7","theme":{"switch":true,"default":"style-light"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","apple_touch_icon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","show_text":"(/≧▽≦/)咦！又好了！","hide_text":"(●—●)喔哟，崩溃啦！"},"i18n":{"placeholder":"搜索文章...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","sticky":"置顶","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":false},"toc":{"post_title":true},"live_time":{"start_time":"","prefix":"博客已萌萌哒运行 undefined 天"},"danmu":{"enable":false,"el":".trm-banner"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2026-03-03 17:16:10"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/my-blog/css/index.css?v=2.2.7" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+
+ 
+<!-- hexo injector head_end start --><script type="text/javascript" src="/js/sakura.js" defer></script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" style="opacity: 0">
+            <!-- top bar -->
+            <header class="trm-top-bar">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/my-blog/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/my-blog/img/favicon.svg">
+    
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/my-blog/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/my-blog/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/my-blog/tags/" target="">
+                    标签
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/my-blog/categories/" target="">
+                    分类
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/my-blog/about/" target="">
+                    关于
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <a id="trm-search-btn" class="trm-search-btn" data-no-swup target="_blank" href="https://www.google.com/search?q=site:null">
+            <i class="iconfont fas fa-search"></i>
+        </a>
+     
+
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner">
+    
+    <!-- banner cover -->
+    <img style="object-position:center;object-fit:cover;" alt="banner" class="trm-banner-cover" src="/my-blog/img/banner.png">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            如何在CP2K实现Metadynamics模拟
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/my-blog/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2022
+                                    </span>
+                                </li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <span id="scroll-triger" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </span>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div class="trm-page-sidebar col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    <div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card"> 
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/my-blog/img/avatar.jpg">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        s1lencewillfall
+    </h5>
+    
+        <div class="trm-label">
+            I&#39;m
+            <span class="trm-typed-text">
+                <!-- Words for theme.user.typedText -->
+            </span>
+        </div>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/s1lencewill" title="GitHub" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                所在地:
+            </div>
+            <div class="trm-label trm-label-light">
+                中国
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div class="trm-page-content col-lg-8">
+                <div id="trm-content" class="trm-content">
+                    <div class="trm-post-info row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            09/20
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            15:30
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            博主
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <p>这里使用cp2k官网的例子，说明一下MtD在cp2k中的实现。这个例子是两个HNO3分子在石墨烯片上的解离动力学。</p>
+<p>首先要会使用cp2k做正常的的AIMD，MtD只是在正常的NVT系综的AIMD中添加相应的关键词即可。</p>
+<h2 id="初始结构"><a href="#初始结构" class="headerlink" title="初始结构"></a>初始结构</h2><p>第一部分是正常的AIMD的输入文件：包含结构、方法、泛函、任务类型、输出信息和重启文件等等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br></pre></td><td class="code"><pre><span class="line">&amp;FORCE_EVAL</span><br><span class="line">  METHOD Quickstep</span><br><span class="line"></span><br><span class="line">@IF ( $&#123;METHOD_TO_USE&#125; == DFT )</span><br><span class="line">  &amp;DFT</span><br><span class="line">      BASIS_SET_FILE_NAME  $&#123;LIBPATH&#125;/BASIS_MOLOPT</span><br><span class="line">      POTENTIAL_FILE_NAME  $&#123;LIBPATH&#125;/GTH_POTENTIALS</span><br><span class="line">    &amp;MGRID</span><br><span class="line">      NGRIDS 5</span><br><span class="line">      CUTOFF 200</span><br><span class="line">    &amp;END MGRID</span><br><span class="line">    &amp;QS</span><br><span class="line">      METHOD GPW</span><br><span class="line">      MAP_CONSISTENT</span><br><span class="line">      EXTRAPOLATION ASPC</span><br><span class="line">      EXTRAPOLATION_ORDER 3</span><br><span class="line">    &amp;END QS</span><br><span class="line"></span><br><span class="line">    &amp;SCF</span><br><span class="line">      MAX_SCF 30</span><br><span class="line">      EPS_SCF 1.0E-5</span><br><span class="line">      SCF_GUESS ATOMIC</span><br><span class="line">      &amp;OT</span><br><span class="line">        PRECONDITIONER FULL_SINGLE_INVERSE</span><br><span class="line">        MINIMIZER DIIS</span><br><span class="line">        N_DIIS 7</span><br><span class="line">      &amp;END OT</span><br><span class="line"></span><br><span class="line">      &amp;OUTER_SCF</span><br><span class="line">        MAX_SCF 3</span><br><span class="line">        EPS_SCF 1.0E-05</span><br><span class="line">      &amp;END OUTER_SCF</span><br><span class="line"></span><br><span class="line">      &amp;PRINT</span><br><span class="line">        &amp;RESTART</span><br><span class="line">          LOG_PRINT_KEY</span><br><span class="line">        &amp;END</span><br><span class="line">      &amp;END</span><br><span class="line">     &amp;END SCF</span><br><span class="line"></span><br><span class="line">     &amp;XC</span><br><span class="line">        &amp;XC_FUNCTIONAL REVPBE</span><br><span class="line">        &amp;END XC_FUNCTIONAL</span><br><span class="line">        &amp;vdW_POTENTIAL</span><br><span class="line">           DISPERSION_FUNCTIONAL PAIR_POTENTIAL</span><br><span class="line">           &amp;PAIR_POTENTIAL</span><br><span class="line">              TYPE DFTD2</span><br><span class="line">              SCALING  1.0</span><br><span class="line">              R_CUTOFF  [angstrom] 16</span><br><span class="line">           &amp;END PAIR_POTENTIAL</span><br><span class="line">        &amp;END vdW_POTENTIAL</span><br><span class="line">     &amp;END XC</span><br><span class="line"></span><br><span class="line">  &amp;END DFT</span><br><span class="line">@ENDIF</span><br><span class="line"></span><br><span class="line">@IF ( $&#123;METHOD_TO_USE&#125; == SE )</span><br><span class="line">  &amp;DFT</span><br><span class="line">    CHARGE 0</span><br><span class="line">    &amp;QS</span><br><span class="line">      METHOD PM6</span><br><span class="line">      &amp;SE</span><br><span class="line">       RC_INTERACTION [angstrom] 8.0</span><br><span class="line">       RC_COULOMB     [angstrom] 8.0</span><br><span class="line">       RC_RANGE       [angstrom] 0.05</span><br><span class="line">      &amp;END</span><br><span class="line">    &amp;END QS</span><br><span class="line">    &amp;SCF</span><br><span class="line">      MAX_SCF 30</span><br><span class="line">      EPS_SCF 1.0E-5</span><br><span class="line">      SCF_GUESS ATOMIC</span><br><span class="line">      &amp;OT </span><br><span class="line">        MINIMIZER DIIS</span><br><span class="line">        PRECONDITIONER FULL_SINGLE_INVERSE</span><br><span class="line">      &amp;END</span><br><span class="line">      &amp;OUTER_SCF</span><br><span class="line">        EPS_SCF 1.0E-5</span><br><span class="line">        MAX_SCF 5</span><br><span class="line">      &amp;END</span><br><span class="line">      &amp;PRINT</span><br><span class="line">        &amp;RESTART OFF</span><br><span class="line">        &amp;END</span><br><span class="line">        &amp;RESTART_HISTORY OFF</span><br><span class="line">        &amp;END</span><br><span class="line">      &amp;END</span><br><span class="line">    &amp;END SCF</span><br><span class="line">  &amp;END DFT</span><br><span class="line">@ENDIF</span><br><span class="line"></span><br><span class="line">@IF ( $&#123;METHOD_TO_USE&#125; == DFTB )</span><br><span class="line">  &amp;DFT</span><br><span class="line">    &amp;QS</span><br><span class="line">      METHOD DFTB</span><br><span class="line">      &amp;DFTB</span><br><span class="line">        SELF_CONSISTENT    T</span><br><span class="line">        DO_EWALD           T</span><br><span class="line">        DISPERSION         T</span><br><span class="line">        &amp;PARAMETER</span><br><span class="line">          PARAM_FILE_PATH  $&#123;LIBPATH&#125;/scc</span><br><span class="line">          PARAM_FILE_NAME  scc_parameter</span><br><span class="line">          UFF_FORCE_FIELD  uff_table</span><br><span class="line">        &amp;END PARAMETER</span><br><span class="line">      &amp;END DFTB</span><br><span class="line">    &amp;END QS</span><br><span class="line">    &amp;SCF</span><br><span class="line">      MAX_SCF 30</span><br><span class="line">      EPS_SCF 1.0E-6</span><br><span class="line">      SCF_GUESS ATOMIC</span><br><span class="line">      &amp;OT</span><br><span class="line">        MINIMIZER DIIS</span><br><span class="line">        PRECONDITIONER FULL_SINGLE_INVERSE</span><br><span class="line">      &amp;END</span><br><span class="line">      &amp;OUTER_SCF</span><br><span class="line">        EPS_SCF 1.0E-6</span><br><span class="line">        MAX_SCF 5</span><br><span class="line">      &amp;END</span><br><span class="line">      &amp;PRINT</span><br><span class="line">        &amp;RESTART OFF</span><br><span class="line">        &amp;END</span><br><span class="line">        &amp;RESTART_HISTORY OFF</span><br><span class="line">        &amp;END</span><br><span class="line">      &amp;END</span><br><span class="line">    &amp;END SCF</span><br><span class="line">    &amp;POISSON</span><br><span class="line">      PERIODIC XYZ</span><br><span class="line">      &amp;EWALD</span><br><span class="line">       EWALD_TYPE SPME</span><br><span class="line">       GMAX 25</span><br><span class="line">       O_SPLINE 5</span><br><span class="line">      &amp;END EWALD</span><br><span class="line">    &amp;END POISSON</span><br><span class="line">  &amp;END DFT</span><br><span class="line">@ENDIF</span><br><span class="line"></span><br><span class="line">  &amp;SUBSYS</span><br><span class="line">    &amp;CELL</span><br><span class="line">      ABC   12.30000  12.78000 20.0</span><br><span class="line">      PERIODIC XYZ</span><br><span class="line">    &amp;END CELL</span><br><span class="line"></span><br><span class="line">    &amp;TOPOLOGY</span><br><span class="line">      CONNECTIVITY  OFF</span><br><span class="line">      COORD_FILE $&#123;XYZPATH&#125;/grly5x3_2hno3.xyz</span><br><span class="line">      COORDINATE XYZ</span><br><span class="line">    &amp;END TOPOLOGY</span><br><span class="line"></span><br><span class="line">    &amp;KIND C</span><br><span class="line">      BASIS_SET DZVP-MOLOPT-GTH</span><br><span class="line">      POTENTIAL GTH-BLYP-q4</span><br><span class="line">    &amp;END KIND</span><br><span class="line"></span><br><span class="line">    &amp;KIND H</span><br><span class="line">      BASIS_SET DZVP-MOLOPT-GTH</span><br><span class="line">      POTENTIAL GTH-BLYP-q1</span><br><span class="line">    &amp;END KIND</span><br><span class="line"></span><br><span class="line">    &amp;KIND O</span><br><span class="line">      BASIS_SET DZVP-MOLOPT-GTH</span><br><span class="line">      POTENTIAL GTH-BLYP-q6</span><br><span class="line">    &amp;END KIND</span><br><span class="line"></span><br><span class="line">    &amp;KIND N</span><br><span class="line">      BASIS_SET DZVP-MOLOPT-GTH</span><br><span class="line">      POTENTIAL GTH-BLYP-q5</span><br><span class="line">    &amp;END KIND</span><br><span class="line"></span><br><span class="line">  &amp;END SUBSYS</span><br><span class="line">&amp;END FORCE_EVAL</span><br><span class="line"></span><br><span class="line">&amp;GLOBAL</span><br><span class="line">  PROJECT gr2hno3_nvt</span><br><span class="line">  RUN_TYPE MD</span><br><span class="line">  PRINT_LEVEL LOW</span><br><span class="line">&amp;END GLOBAL</span><br><span class="line"></span><br><span class="line">&amp;MOTION</span><br><span class="line">  &amp;MD</span><br><span class="line">    ENSEMBLE NVT</span><br><span class="line">    STEPS  50000</span><br><span class="line">    TIMESTEP 1.0</span><br><span class="line">    TEMPERATURE 300.0</span><br><span class="line">    TEMP_TOL   100</span><br><span class="line">    &amp;THERMOSTAT</span><br><span class="line">      &amp;NOSE</span><br><span class="line">        LENGTH 3</span><br><span class="line">        YOSHIDA 3</span><br><span class="line">        TIMECON 100.0</span><br><span class="line">        MTS 2</span><br><span class="line">      &amp;END NOSE</span><br><span class="line">    &amp;END</span><br><span class="line">    ANGVEL_ZERO</span><br><span class="line">    COMVEL_TOL  2.0E-7</span><br><span class="line"></span><br><span class="line">    &amp;PRINT</span><br><span class="line">      &amp;ENERGY</span><br><span class="line">        &amp;EACH</span><br><span class="line">           MD 10</span><br><span class="line">        &amp;END</span><br><span class="line">      &amp;END</span><br><span class="line"></span><br><span class="line">      &amp;PROGRAM_RUN_INFO</span><br><span class="line">        &amp;EACH</span><br><span class="line">           MD 100</span><br><span class="line">        &amp;END</span><br><span class="line">      &amp;END</span><br><span class="line">      FORCE_LAST</span><br><span class="line">    &amp;END PRINT</span><br><span class="line">  &amp;END MD</span><br><span class="line"></span><br><span class="line">  &amp;PRINT</span><br><span class="line">    &amp;TRAJECTORY</span><br><span class="line">      &amp;EACH</span><br><span class="line">        MD 100</span><br><span class="line">      &amp;END</span><br><span class="line">    &amp;END</span><br><span class="line">    &amp;VELOCITIES OFF</span><br><span class="line">    &amp;END</span><br><span class="line">    &amp;RESTART</span><br><span class="line">      &amp;EACH</span><br><span class="line">         MD 1000</span><br><span class="line">      &amp;END</span><br><span class="line">      ADD_LAST NUMERIC</span><br><span class="line">    &amp;END</span><br><span class="line">    &amp;RESTART_HISTORY </span><br><span class="line">      &amp;EACH</span><br><span class="line">         MD 2000</span><br><span class="line">      &amp;END</span><br><span class="line">    &amp;END</span><br><span class="line">  &amp;END</span><br><span class="line">  &amp;CONSTRAINT</span><br><span class="line">    &amp;FIXED_ATOMS</span><br><span class="line">      LIST    48 51 54 57 60 45 59 44 58 43</span><br><span class="line">    &amp;END</span><br><span class="line">  &amp;END</span><br><span class="line">&amp;END MOTION</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加外部限制"><a href="#添加外部限制" class="headerlink" title="添加外部限制"></a>添加外部限制</h2><p>但实际上，正常的AIMD很难观察到解离过程，需要很长的运行时间。上述文件使用的方法是半经验方法，经测试可以运行，但是NHO3分子很容易跑出石墨烯范围，所以有必要添加限制：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&amp;EXTERNAL_POTENTIAL</span><br><span class="line">     ATOMS_LIST   61..70</span><br><span class="line">     FUNCTION   0.000000000001*(Z^2)^4</span><br><span class="line">  &amp;END</span><br><span class="line"></span><br><span class="line">  &amp;EXTERNAL_POTENTIAL</span><br><span class="line">     ATOMS_LIST   61..70</span><br><span class="line">     FUNCTION   0.0000000000001*(X^2)^4</span><br><span class="line">  &amp;END</span><br><span class="line"></span><br><span class="line">  &amp;EXTERNAL_POTENTIAL</span><br><span class="line">     ATOMS_LIST   61..70</span><br><span class="line">     FUNCTION   0.0000000000001*(Y^2)^4</span><br><span class="line">  &amp;END</span><br></pre></td></tr></table></figure>
+
+<p>上述定义一个以系统坐标中心为中心的球势，它只作用于两个分子。</p>
+<h2 id="集合变量-CV-的选择"><a href="#集合变量-CV-的选择" class="headerlink" title="集合变量(CV)的选择"></a>集合变量(CV)的选择</h2><p>正常的AIMD可以运行之后，说明其他设置是没有问题的，就可以着手MtD的构建。</p>
+<p>首先要思考自己的体系或者关心的问题适合以什么样的集合变量（CV）来描述反应坐标，键长、键角、配位数等等。</p>
+<p>这个体系中，NHO3解离生成NO2和OH最显著的变化就是N-O，但是没法确定是否发生分子间或者分子内的H转移，实际上键长变化是无法精准确定的，所以使用N-O配位数来作为反应坐标是比较合适的。</p>
+<p>其次，考虑到石墨烯的影响，吸附或者非吸附解离是无法确定并且吸附点位也无法精确确定，所以使用C-O的配位数可以区分是否吸附，C-H的配位可以确定NO2还是OH更容易吸附。</p>
+<p>最终使用三个配位数来作为反应坐标：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&amp;COLVAR</span><br><span class="line">   &amp;COORDINATION</span><br><span class="line">      KINDS_FROM  O</span><br><span class="line">      KINDS_TO   C</span><br><span class="line">      R_0 [angstrom]  1.8</span><br><span class="line">      NN  8</span><br><span class="line">      ND  14</span><br><span class="line">   &amp;END COORDINATION</span><br><span class="line">&amp;END COLVAR</span><br><span class="line"></span><br><span class="line">&amp;COLVAR</span><br><span class="line">   &amp;COORDINATION</span><br><span class="line">      KINDS_FROM  N</span><br><span class="line">      KINDS_TO   O</span><br><span class="line">      R_0 [angstrom]  1.8</span><br><span class="line">      NN  8 </span><br><span class="line">      ND  14</span><br><span class="line">   &amp;END COORDINATION</span><br><span class="line">&amp;END COLVAR</span><br><span class="line"></span><br><span class="line">&amp;COLVAR</span><br><span class="line">   &amp;COORDINATION</span><br><span class="line">      KINDS_FROM  H</span><br><span class="line">      KINDS_TO   C</span><br><span class="line">      R_0 [angstrom]  1.6</span><br><span class="line">      NN  8</span><br><span class="line">      ND  14</span><br><span class="line">   &amp;END COORDINATION</span><br><span class="line">&amp;END COLVAR</span><br></pre></td></tr></table></figure>
+
+<p>这里配位数公式是：n和m对应参数NN和ND、r0对应R_0</p>
+<p>这个公式是使用统计的接触距离数作为配位数的近似，NN和ND参数是为了让函数连续可导，因为偏置势必然要对集合变量产生作用力，计算化学中显著变量是原子坐标R，确定集合变量（CV）既要能对体系过程进行描述，又要是坐标R的连续可导函数。</p>
+<h2 id="激活MtD算法"><a href="#激活MtD算法" class="headerlink" title="激活MtD算法"></a>激活MtD算法</h2><p>集合变量的设置添加进 &amp;SUBSYS 模块即可。接下来是激活MtD算法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&amp;METADYN</span><br><span class="line">      DO_HILLS </span><br><span class="line">      NT_HILLS 100</span><br><span class="line">      WW 3.0e-3</span><br><span class="line"></span><br><span class="line">      &amp;METAVAR</span><br><span class="line">        SCALE 0.2</span><br><span class="line">        COLVAR 1</span><br><span class="line">      &amp;END METAVAR</span><br><span class="line"></span><br><span class="line">      &amp;METAVAR</span><br><span class="line">        SCALE 0.3</span><br><span class="line">        COLVAR 2</span><br><span class="line">      &amp;END METAVAR</span><br><span class="line"></span><br><span class="line">     &amp;METAVAR</span><br><span class="line">        SCALE 0.2</span><br><span class="line">        COLVAR 3</span><br><span class="line">      &amp;END METAVAR</span><br><span class="line"></span><br><span class="line">      &amp;PRINT</span><br><span class="line">        &amp;COLVAR</span><br><span class="line">           COMMON_ITERATION_LEVELS 3</span><br><span class="line">           &amp;EACH</span><br><span class="line">             MD 1</span><br><span class="line">           &amp;END</span><br><span class="line">        &amp;END</span><br><span class="line">        &amp;HILLS</span><br><span class="line">           COMMON_ITERATION_LEVELS 3</span><br><span class="line">           &amp;EACH</span><br><span class="line">             MD 1</span><br><span class="line">           &amp;END</span><br><span class="line">        &amp;END</span><br><span class="line">      &amp;END</span><br><span class="line">    &amp;END METADYN</span><br></pre></td></tr></table></figure>
+
+<p>其中必要的参数：</p>
+<ul>
+<li><strong>NT_HILLS</strong> 是高斯波产生时间步长</li>
+<li><strong>WW</strong> 是波高</li>
+<li><strong>SCALE</strong> 是波宽，但是必须指定CV，就是说不同CV波宽是可以不一致的</li>
+</ul>
+<p>&amp;PRINT下的&amp;COLVAR和 &amp;HILLS是输出CV和高斯峰的信息。</p>
+<p>以上部分必须添加到&amp;MOTION的&amp;FREE_ENERGY 部分。</p>
+<h2 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h2><p>运行100ps之后，我们可以额外得到COLVAR.metadynLog和HILLS.metadynLog文件，包含了CV和高斯峰的信息。</p>
+<p>使用COLVAR.metadynLog文件作图可以得到CV随时间变化的图像来判断采样情况：</p>
+<p>HILLS.metadynLog可以获得多维自由能面：CV1和CV2的2维自由能面。</p>
+<p>其实cp2k自带自由能面的后处理工具：graph.popt，可以使用XXX.restart文件获得fes.dat,包含了CV和自由能数据方便绘图。</p>
+<p>运行和cp2k一样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">graph.popt -i -ndim 3 -ndw 1 2 -file XXX.restart -cp2k -o COF_GAPW.out</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>nd dim是CV总维度数</li>
+<li>ndw是需要绘制的CV编号：1 2 代表CV1和CV2</li>
+</ul>
+
+</article>
+    
+    
+
+</div>
+<div class="trm-post-next-prev row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/my-blog/2026/03/03/hello-world/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/my-blog/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" #.">
+                    未分类
+                </a>
+            </div>
+            <h5>
+                <a href="/my-blog/2026/03/03/hello-world/" class="trm-anima-link">
+                    Hello World
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>26/03/03</li>
+                <li>12:31</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation">
+        <a href="/my-blog/2022/05/30/orca5-%E7%89%88%E6%9C%ACmetadynamics%E5%8F%82%E6%95%B0/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/my-blog/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /my-blog/categories/%E8%AE%A1%E7%AE%97%E5%8C%96%E5%AD%A6/">
+                    计算化学
+                </a>
+            </div>
+            <h5>
+                <a href="/my-blog/2022/05/30/orca5-%E7%89%88%E6%9C%ACmetadynamics%E5%8F%82%E6%95%B0/" class="trm-anima-link">
+                    orca5.0版本metadynamics参数
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>22/05/30</li>
+                <li>18:35</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-footer-card trm-scroll-animation">
+
+    
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>
+                由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v7.3.0
+            </span>
+            <span class="footer-separator" data-separator=" | "></span>
+            <span> 
+                主题 - 
+                <a rel="noopener" href='https://github.com/MaLuns/hexo-theme-async' target='_blank'>Async</a>
+                v2.2.7
+            </span>
+        </div>
+      
+
+     
+
+    
+        <div class="trm-footer-item">
+            © 2026 s1lencewill. All rights reserved.
+        </div>
+     
+</footer>
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            
+
+    <div id="post-toc" class="trm-post-toc">
+      <div class="trm-post-toc-header">
+        目录导航
+				<span id="post-toc-top">
+					置顶
+				</span>
+      </div>
+      <div class="trm-post-toc-content">
+        <ol class="trm-toc"><li class="trm-toc-item trm-toc-level-2" title="初始结构"><a rel="nofollow" class="trm-toc-link" href="#初始结构"><span class="trm-toc-text">初始结构</span></a></li><li class="trm-toc-item trm-toc-level-2" title="添加外部限制"><a rel="nofollow" class="trm-toc-link" href="#添加外部限制"><span class="trm-toc-text">添加外部限制</span></a></li><li class="trm-toc-item trm-toc-level-2" title="集合变量(CV)的选择"><a rel="nofollow" class="trm-toc-link" href="#集合变量-CV-的选择"><span class="trm-toc-text">集合变量(CV)的选择</span></a></li><li class="trm-toc-item trm-toc-level-2" title="激活MtD算法"><a rel="nofollow" class="trm-toc-link" href="#激活MtD算法"><span class="trm-toc-text">激活MtD算法</span></a></li><li class="trm-toc-item trm-toc-level-2" title="结果分析"><a rel="nofollow" class="trm-toc-link" href="#结果分析"><span class="trm-toc-text">结果分析</span></a></li></ol>
+      </div>
+    </div>
+
+            
+<div class="trm-fixed-container">
+    
+        <div class="trm-fixed-btn post-toc-btn" data-title="目录">
+            <i class="iconfont fas fa-th-list"></i>
+        </div>
+    
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+  </div>
+  <!-- app wrapper end -->
+
+  
+    <div class="trm-search-popup">
+        <div class="trm-search-wrapper">
+            <div class="form trm-search-form">
+                <div class="trm-search-input-icon">
+                    <i class="iconfont fas fa-search"></i>
+                </div>
+                <input class="trm-search-input" type="text" placeholder="搜索文章...">
+                <div class="trm-search-btn-close">
+                    <i class="iconfont fas fa-times"></i>
+                </div>
+            </div>
+            <div class="trm-search-result-container">
+                <div class="trm-search-empty">
+                    请输入关键词进行搜索
+                </div>
+            </div>
+            <div class="trm-search-footer">
+                <div class="trm-search-stats"></div>
+                <ul class="trm-search-commands">
+                    <li>
+                        <kbd class="command-palette-commands-key">
+                            <svg width="15" height="15" aria-label="Escape key" role="img">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.2">
+                                    <path
+                                        d="M13.6167 8.936c-.1065.3583-.6883.962-1.4875.962-.7993 0-1.653-.9165-1.653-2.1258v-.5678c0-1.2548.7896-2.1016 1.653-2.1016.8634 0 1.3601.4778 1.4875 1.0724M9 6c-.1352-.4735-.7506-.9219-1.46-.8972-.7092.0246-1.344.57-1.344 1.2166s.4198.8812 1.3445.9805C8.465 7.3992 8.968 7.9337 9 8.5c.032.5663-.454 1.398-1.4595 1.398C6.6593 9.898 6 9 5.963 8.4851m-1.4748.5368c-.2635.5941-.8099.876-1.5443.876s-1.7073-.6248-1.7073-2.204v-.4603c0-1.0416.721-2.131 1.7073-2.131.9864 0 1.6425 1.031 1.5443 2.2492h-2.956">
+                                    </path>
+                                </g>
+                            </svg>
+                        </kbd>
+                        <span class="command-palette-Label">to close</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+        <script src="/my-blog/js/plugins/typing.js?v=2.2.7"></script>
+    
+
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+		
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+
+
+<script id="async-script" src="/my-blog/js/main.js?v=2.2.7"></script>
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+</body>
+
+</html>
