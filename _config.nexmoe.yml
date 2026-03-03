@@ -1,0 +1,89 @@
+avatar: https://cdn.jsdelivr.net/gh/theme-nexmoe/hexo-theme-nexmoe@latest/packages/demo/source/images/avatar.png
+background:
+  path: https://cdn.jsdelivr.net/gh/theme-nexmoe/hexo-theme-nexmoe@latest/packages/demo/source/images/default.jpg
+  width: 1280
+  height: 726
+
+favicon:
+  href: /favicon.ico
+  type: image/x-icon
+
+function:
+  globalToc: true
+  wordCount: false
+  copyCode: true
+
+imageCDN:
+  enable: false
+  origin: /../../images/
+  to: https://cdn.jsdelivr.net/gh/nexmoe/nexmoe.github.io@latest/images/
+
+customStyles:
+  - custom.css
+
+iconlib:
+
+menu:
+  首页:
+    - /
+    - icon-home
+  归档:
+    - /archives
+    - icon-container
+  标签:
+    - /tags
+    - icon-tag
+  分类:
+    - /categories
+    - icon-apps
+  关于:
+    - /about
+    - icon-info-circle
+
+widgets:
+  - name: search
+    enable: true
+    options:
+      search:
+        type: engine
+        url: https://cn.bing.com/search?q=site:s1lencewill.github.io/my-blog
+        id:
+  - name: social
+    enable: true
+    options:
+      social:
+        GitHub:
+          - https://github.com/s1lencewill
+          - icon-github
+          - rgb(25, 23, 23)
+          - rgba(25, 23, 23, .1)
+  - name: category
+    enable: true
+  - name: tagcloud
+    enable: true
+    options:
+      maxTagcloud: 17
+  - name: archive
+    enable: true
+    options:
+      widgetAchive:
+        archive_type: 'year'
+        show_count: true
+  - name: recent_posts
+    enable: true
+
+copyTip: "著作权归作者所有。\n商业转载请联系作者获得授权，非商业转载请注明出处。\n来源：%url"
+
+slotHead: |
+
+slotFooter: |
+
+slotSidebar: |
+  <br><a target="_blank" href="https://beian.miit.gov.cn/">备案号</a>
+
+slotComment: |
+
+slotCopyright: |
+  <strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可
+
+slotArticleEnd: |

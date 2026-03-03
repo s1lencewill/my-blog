@@ -13,3 +13,4 @@ _multiconfig.yml
 *.njsproj
 *.sln
 *.sw?
+themes/hexo-theme-nexmoe
