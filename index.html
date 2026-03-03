@@ -106,7 +106,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/my-blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/my-blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">2</span></a></li><li class="menu-item menu-item-categories"><a href="/my-blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">1</span></a></li><li class="menu-item menu-item-tags"><a href="/my-blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">3</span></a></li><li class="menu-item menu-item-about"><a href="/my-blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/my-blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/my-blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">2</span></a></li><li class="menu-item menu-item-categories"><a href="/my-blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">1</span></a></li><li class="menu-item menu-item-tags"><a href="/my-blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">4</span></a></li><li class="menu-item menu-item-about"><a href="/my-blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
@@ -154,7 +154,7 @@
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -206,7 +206,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/my-blog/2026/03/03/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/" class="post-title-link" itemprop="url">我的第一篇博客文章</a>
+          <a href="/my-blog/2026/03/03/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/" class="post-title-link" itemprop="url">ORCA做Metadynamics的案例</a>
         </h2>
 
         <div class="post-meta-container">
@@ -225,7 +225,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/my-blog/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+          <a href="/my-blog/categories/%E8%AE%A1%E7%AE%97%E5%8C%96%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">计算化学</span></a>
         </span>
     </span>
 
@@ -239,21 +239,30 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="欢迎来到我的博客"><a href="#欢迎来到我的博客" class="headerlink" title="欢迎来到我的博客"></a>欢迎来到我的博客</h1><p>这是我的第一篇博客文章！很高兴你能来到这里。</p>
-<h2 id="关于Hexo"><a href="#关于Hexo" class="headerlink" title="关于Hexo"></a>关于Hexo</h2><p>Hexo是一个快速、简洁且高效的博客框架。它基于Node.js，支持Markdown语法，可以快速生成静态网页。</p>
-<h2 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h2><ul>
-<li><strong>快速生成</strong>: Hexo可以在几秒钟内生成数百个页面</li>
-<li><strong>Markdown支持</strong>: 使用Markdown编写文章，简单易用</li>
-<li><strong>主题丰富</strong>: 有大量精美的主题可供选择</li>
-<li><strong>插件扩展</strong>: 通过插件扩展功能</li>
+          <h1 id="ORCA做Metadynamics的案例"><a href="#ORCA做Metadynamics的案例" class="headerlink" title="ORCA做Metadynamics的案例"></a>ORCA做Metadynamics的案例</h1><p>上一篇文章更新了orca5.0版本metadynamics参数，根据这些参数，做一些实际例子。</p>
+<h2 id="实例介绍"><a href="#实例介绍" class="headerlink" title="实例介绍"></a>实例介绍</h2><p>首先是orca动力学模块开发者 Martin Brehm教授在官网上有个aimd的例子：<a target="_blank" rel="noopener" href="https://www.brehm-research.de/orca-md-module">ORCA Molecular Dynamics Module</a></p>
+<p>无法科学上网可以看看sob社长的博文：<a target="_blank" rel="noopener" href="https://sobereva.com/595">使用ORCA做从头算动力学(AIMD)的简单例子</a></p>
+<p>这个例子是真空中[Al(H2O)6]3+与NH3之间的质子转移的aimd模拟。这里我们将原输入文件改成metadynamics的输入文件，进行模拟。</p>
+<h2 id="输入文件"><a href="#输入文件" class="headerlink" title="输入文件"></a>输入文件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">! MD BLYP D3 def2-SVP</span><br><span class="line">%maxcore  10000</span><br><span class="line">%pal nprocs   8 end</span><br><span class="line">%md</span><br><span class="line">  initvel 300_K</span><br><span class="line">  timestep 1.0_fs</span><br><span class="line">  thermostat berendsen 300_K timecon 20.0_fs</span><br><span class="line">  dump position stride 1 filename &quot;trajectory.xyz&quot;</span><br><span class="line">  Manage_Colvar Define 1 Distance Atom 9 Atom 19</span><br><span class="line">  Manage_Colvar Define 2 Distance Atom 9 Atom 7</span><br><span class="line">  Metadynamics Colvar 1 Scale 0.5_A Colvar 2 Scale 0.5_A</span><br><span class="line">  Metadynamics HillSpawn 40 0.5 0.5 Store 250</span><br><span class="line">  run 500</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li>CV1是H-N键长</li>
+<li>CV2是H-O键长</li>
+<li>高斯峰的参数是40 0.5 0.5</li>
+<li>每250fs保存一次自由能剖面</li>
+<li>总共运行500fs，算是一个快速反应过程</li>
 </ul>
-<h2 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h2><h3 id="创建新文章"><a href="#创建新文章" class="headerlink" title="创建新文章"></a>创建新文章</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new post <span class="string">&quot;文章标题&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="启动本地服务器"><a href="#启动本地服务器" class="headerlink" title="启动本地服务器"></a>启动本地服务器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-
-<h3 id="生成静态文件"><a href="#生成静态文件" class="headerlink" title="生成静态文件"></a>生成静态文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo generate</span><br></pre></td></tr></table></figure>
-
-<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>这只是开始，我会在这里分享更多有趣的内容。敬请期待！</p>
+<p>二十几个原子运行速度还是挺快的。用ase看一下反应轨迹，基本一致。两个CV变化如图，200fs反应基本完成。</p>
+<h2 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h2><p>运行完毕，如果安装了Gnuplot会自动产生相应是绘图输入文件。这里选取第250fs的自由能剖面图像，可以看到正好对应了两个稳态及相互变化跨越的自由能壁垒。</p>
+<p>如果高斯峰参数设为20 0.25 0.25，就会出现下面这种比较细长尖锐的自由能剖面，选取适当的参数是必要的。</p>
+<h2 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h2><p>下面是我自己的一个工作，也是使用metadynamics做的真空还原反应的自由能变化。总体来说，效果还是不错。文章还在修改具体参数就先不写了。</p>
+<ul>
+<li>自由能剖面</li>
+<li>CV变化曲线</li>
+<li>势能和总能量变化</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>作为orca的重磅更新，metadynamics模块能实现很多重要模拟。与orca对标的Gaussian相比，Gaussian就有点摆了，虽然用户量有绝对优势。</p>
+<p>还有非常感谢计算化学公社的sob社长开发的Multiwfn，能便捷实现orca输入文件的生成，开源让世界更美好。</p>
 <hr>
 <p><strong>感谢阅读！</strong></p>
 
