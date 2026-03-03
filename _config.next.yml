@@ -1,0 +1,199 @@
+# ===============================================================
+# NexT Theme Configuration
+# ===============================================================
+# See: https://theme-next.js.org/docs/getting-started/configuration.html
+
+# ---------------------------------------------------------------
+# Theme Settings between Hexo and NexT
+# ---------------------------------------------------------------
+# Set the value to true to use CDN for the third-party plugins.
+# Set the value to false to use the local source code.
+# Set the value to 'local' to use the local source code without minification.
+# Set the value to 'cdnjs' to use the cdnjs.
+# Set the value to 'jsdelivr' to use the jsdelivr.
+vendors:
+  internal: local
+  plugins: cdnjs
+  css: cdnjs
+  js: cdnjs
+
+# ---------------------------------------------------------------
+# Scheme Settings
+# ---------------------------------------------------------------
+# Schemes
+# scheme: Muse
+# scheme: Mist
+# scheme: Pisces
+scheme: Gemini
+
+# ---------------------------------------------------------------
+# Site Information Settings
+# ---------------------------------------------------------------
+# Set default keywords (Use a comma to separate)
+keywords: 博客, 技术, 生活
+
+# Set favicon (icon) for your website
+favicon:
+  small: /images/favicon-16x16.png
+  medium: /images/favicon-32x32.png
+  apple_touch_icon: /images/apple-touch-icon.png
+  safari_pinned_tab: /images/logo.svg
+
+# ---------------------------------------------------------------
+# Menu Settings
+# ---------------------------------------------------------------
+menu:
+  home: / || fa fa-home
+  archives: /archives/ || fa fa-archive
+  categories: /categories/ || fa fa-th
+  tags: /tags/ || fa fa-tags
+  about: /about/ || fa fa-user
+
+# Enable / Disable menu icons / item badges.
+menu_settings:
+  icons: true
+  badges: true
+
+# ---------------------------------------------------------------
+# Sidebar Settings
+# ---------------------------------------------------------------
+sidebar:
+  position: left
+  display: post
+  padding: 18
+  offset: 12
+
+# Sidebar Avatar
+avatar:
+  url: /images/avatar.gif
+  rounded: false
+  rotated: false
+
+# Posts / Categories / Tags in sidebar.
+site_state: true
+
+# Social Links
+social:
+  GitHub: https://github.com/yourusername || fab fa-github
+  E-Mail: mailto:your.email@example.com || fa fa-envelope
+
+social_icons:
+  enable: true
+  icons_only: false
+  transition: false
+
+# ---------------------------------------------------------------
+# Footer Settings
+# ---------------------------------------------------------------
+footer:
+  since: 2026
+  icon:
+    name: fa fa-heart
+    animated: true
+    color: "#ff0000"
+  copyright: 博主
+  powered: true
+
+# ---------------------------------------------------------------
+# Post Settings
+# ---------------------------------------------------------------
+# Automatically excerpt description in homepage as preamble text.
+excerpt_description: true
+
+# Read more button
+# If true, the read more button will be displayed in excerpt section.
+read_more_btn: true
+
+# Post meta display settings
+post_meta:
+  item_text: true
+  created_at: true
+  updated_at: true
+  categories: true
+
+# Post wordcount display settings
+# Dependencies: https://github.com/next-theme/hexo-wordcount
+post_wordcount:
+  item_text: true
+  wordcount: true
+  min2read: true
+  totalcount: false
+  separated_meta: true
+
+# Use icon instead of the symbol # to indicate the tag at the bottom of the post
+tag_icon: true
+
+# ---------------------------------------------------------------
+# Custom Page Settings
+# ---------------------------------------------------------------
+# TagCloud settings for tags page.
+tagcloud:
+  min: 12
+  max: 30
+  amount: 100
+  orderby: name
+  order: 1
+
+# ---------------------------------------------------------------
+# Third Party Services Settings
+# ---------------------------------------------------------------
+# MathJax
+math:
+  enable: false
+  per_page: false
+  engine: 'mathjax'
+  version: '3.2.2'
+
+# ---------------------------------------------------------------
+# Animation Settings
+# ---------------------------------------------------------------
+# Use Animate.css to animate everything.
+# For more information: https://animate.style
+motion:
+  enable: true
+  async: false
+  transition:
+    post_block: fadeIn
+    post_header: fadeInDown
+    post_body: fadeInDown
+    coll_header: fadeInLeft
+    sidebar: fadeInUp
+
+# Progress bar in the top during page loading.
+pace:
+  enable: true
+  color: "#222"
+  theme: minimal
+
+# ---------------------------------------------------------------
+# Font Settings
+# ---------------------------------------------------------------
+font:
+  enable: false
+  host:
+
+# ---------------------------------------------------------------
+# SEO Settings
+# ---------------------------------------------------------------
+# Disable Baidu transformation on mobile devices.
+disable_baidu_transformation: false
+
+# Set the canonical URL of your website.
+canonical: true
+
+# Change the URL prefix of the images in your posts.
+# For more information: https://github.com/next-theme/hexo-filter-image
+image_lazyload:
+  enable: true
+  onlypost: false
+  loadingImg:
+
+# ---------------------------------------------------------------
+# Dark Mode
+# ---------------------------------------------------------------
+darkmode: false
+
+# ---------------------------------------------------------------
+# Pangu Support
+# For more information: https://github.com/vinta/pangu.js
+pangu: true
