@@ -1,0 +1,122 @@
+open_graph: true
+
+user:
+  name: s1lencewill
+  first_name: 
+  last_name: 
+  email: 
+  domain: https://s1lencewill.github.io/my-blog
+  avatar: /img/avatar.jpg
+  describe: 欢迎来到我的个人博客，这里记录着我的学习心得和技术分享
+
+links_info:
+  name: s1lencewill的博客
+  url: https://s1lencewill.github.io/my-blog
+  avatar: /img/avatar.jpg
+  describe: 个人技术博客
+  rule_text: 
+
+favicon:
+  logo: /img/favicon.svg
+  icon16: /img/favicon.svg
+  icon32: /img/favicon.svg
+  visibilitychange: false
+
+assets:
+  internal_provider: local
+  third_party_provider: unpkg
+
+icons:
+  sun: far fa-sun
+  moon: far fa-moon
+
+top_bars:
+  - title: 首页
+    url: /
+  - title: 归档
+    url: /archives/
+  - title: 标签
+    url: /tags/
+  - title: 分类
+    url: /categories/
+  - title: 关于
+    url: /about/
+
+banner:
+  use_cover: false
+  default:
+    type: img
+    bgurl: /img/banner.png
+    banner_text: 欢迎来到我的博客
+    position: center
+    fit: cover
+  index:
+    banner_title: 欢迎来到我的博客
+    banner_text: 记录生活，分享技术
+  archive:
+    banner_title: 文章归档
+    banner_text: 所有文章的集合
+  about:
+    banner_title: 关于我
+    banner_text: 了解更多关于我
+
+sidebar:
+  typed_text_prefix: I'm
+  typed_text:
+    - 程序开发者
+    - 技术爱好者
+    - 持续学习者
+  info:
+    - key: 所在地
+      val: 中国
+  social:
+    - name: GitHub
+      icon: fab fa-github
+      url: https://github.com/s1lencewill
+
+about:
+  insert: none
+  title: 关于我
+  introduction: 欢迎来到我的个人博客！我是一名程序开发者，热爱技术和编程。这个博客主要用于记录学习心得和技术分享。
+  blog: <ul class="trm-list"><li>程序：Hexo</li><li>主题：hexo-theme-async</li></ul>
+  privacy: 本网站不会追踪访客行为，访客可自由浏览。
+
+footer:
+  powered:
+    enable: true
+  beian:
+    enable: false
+  custom_text: © 2026 s1lencewill. All rights reserved.
+
+reward:
+  enable: false
+
+toc:
+  enable: true
+  icon: fas fa-th-list
+  list_number: false
+
+post:
+  word_count: true
+  min2read: true
+  date_format: YYYY-MM-DD
+  updated_format: YYYY-MM-DD
+
+comments:
+  enable: false
+
+aplayer:
+  enable: false
+
+mathjax:
+  enable: false
+
+search:
+  enable: true
+  path: search.json
+  field: post
+  content: true
+  limit: 1000
+
+pjax:
+  enable: true
