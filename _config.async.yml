@@ -1,7 +1,7 @@
 open_graph: true
 
 user:
-  name: s1lencewill
+  name: s1lencewillfall
   first_name: 
   last_name: 
   email: 
@@ -52,7 +52,7 @@ banner:
     fit: cover
   index:
     banner_title: 欢迎来到我的博客
-    banner_text: 记录生活，分享技术
+    banner_text: 醉后不知天在水，满船清梦压星河
   archive:
     banner_title: 文章归档
     banner_text: 所有文章的集合
@@ -63,7 +63,6 @@ banner:
 sidebar:
   typed_text_prefix: I'm
   typed_text:
-    - 程序开发者
     - 技术爱好者
     - 持续学习者
   info:
@@ -77,7 +76,7 @@ sidebar:
 about:
   insert: none
   title: 关于我
-  introduction: 欢迎来到我的个人博客！我是一名程序开发者，热爱技术和编程。这个博客主要用于记录学习心得和技术分享。
+  introduction: 欢迎来到我的个人博客！我是一名计算化学er，热爱技术和编程。这个博客主要用于记录学习心得和技术分享。
   blog: <ul class="trm-list"><li>程序：Hexo</li><li>主题：hexo-theme-async</li></ul>
   privacy: 本网站不会追踪访客行为，访客可自由浏览。
 
